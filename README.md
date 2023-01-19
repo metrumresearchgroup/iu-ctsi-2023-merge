@@ -1,5 +1,5 @@
-# acop13-merge-demo
-MeRGE demonstration for ACoP 13 pre-conference workshop in Aurora, CO 30 October 2022.
+# iu-ctsi-2023-merge
+MeRGE demonstration for IU CTSI workshop in Indianapolis, IN, Feb 2023.
 
 This workshop focused on the packages that are showcased in the [MeRGE Expo 1 website](https://merge.metrumrg.com/expo/expo1-nonmem-foce/) and the code in this repo is a simplified version of code maintained in the [MeRGE Expo 1 GitHub Repo](https://github.com/metrumresearchgroup/expo1-nonmem-foce/).
 
