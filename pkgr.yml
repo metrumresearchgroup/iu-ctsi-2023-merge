@@ -1,0 +1,41 @@
+Version: 1
+
+Packages:
+  - tidyverse
+  - pmplots
+  - pmtables
+  - bbr
+  - yaml
+  - yspec
+  - mrggsave
+  - here
+  - patchwork
+  - rmarkdown
+  - PKPDmisc
+  - glue
+  - knitr
+  - sessioninfo
+  - lastdose
+  - mrgsolve
+  - vpc
+  - tidyvpc
+  - renv
+
+Repos:
+  - MPN: https://mpn.metworx.com/snapshots/stable/2022-08-31
+
+Lockfile:
+    Type: renv
+
+Customizations:
+  Packages:
+    - bbr:
+        Suggests: true
+    - pmplots:
+        Suggests: true
+    - pmtables:
+        Suggests: true
+    - mrgsolve:
+        Suggests: true
+    
+Rpath: ${R_EXE_4_1}
