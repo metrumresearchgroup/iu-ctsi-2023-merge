@@ -1,0 +1,109 @@
+---
+title: "Example Model Management"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup}
+library(bbr)
+library(tidyverse)
+library(here)
+library(pmplots)
+library(magrittr)
+
+source(here("script/bbr-helpers.R"))
+
+# define model dir and load tags
+MODEL_DIR <- here("model/pk")
+TAGS <- yaml::read_yaml(here("script/tags.yaml"))
+```
+
+## import data
+```{r, eval=FALSE}
+dat <- data.table::fread(here("data/derived/analysis3.csv"), na.strings = ".")
+```
+
+## view diagnostics
+```{r}
+view_diag <- function (.mod) {
+  browseURL(here::here("model", "pk", .mod, 
+                       glue::glue("basic-diagnostic-plots-{.mod}.html")))
+}
+
+view_diag(106)
+```
+
+
+## run log
+```{r, eval=FALSE}
+## arrange all tags in folder
+# arrange_dir_tags(MODEL_DIR,TAGS)
+
+run_log(file.path(MODEL_DIR), .recurse=FALSE) %>% 
+  mutate_at("run", as.numeric) %>% 
+  arrange(-run) %>% 
+  add_config() %>%
+  add_summary() %>% 
+  collapse_to_string(tags) %>% 
+  select(run,description,tags,based_on,ofv,error_msg) %>%
+  View("runlog")
+```
+
+## model iteration
+```{r, eval=FALSE}
+mod <- read_model(file.path(MODEL_DIR,106))
+
+mod %<>% copy_mod()
+mod %<>% add_tags(c(TAGS$cov_cl_wt))
+mod %<>% add_description("covariate model")
+mod %>% edit_model()
+```
+
+## submit grid
+```{r, eval=FALSE}
+submit_model(mod, .bbi_args=list(overwrite=TRUE, parallel = TRUE, threads = 8))
+```
+
+## submit local
+```{r, eval=FALSE}
+submit_model(mod, .mode="local", .bbi_args=list(overwrite=TRUE, parallel = TRUE, threads = 4))
+```
+
+## view run results
+```{r, eval=FALSE}
+read_model(file.path(MODEL_DIR,106)) %T>% 
+  view_lst() %>% 
+  model_summary() 
+```
+
+## import run results
+
+```{r}
+res <- nm_join(file.path(MODEL_DIR,106))
+
+res %>% pmplots::dv_pred()
+```
+
+
+
+
+
+
+
+## compare two models
+```{r, eval=FALSE}
+mod_diff(106, 200)
+```
+
+## run many models
+```{r, eval=FALSE}
+map(106:200, ~read_model(file.path(MODEL_DIR,.x))) %>% 
+  submit_models(.bbi_args=list(overwrite=TRUE, parallel = TRUE, threads = 8))
+```
+
+## apply tag to many models
+```{r, eval=FALSE}
+map(106:200, ~read_model(file.path(MODEL_DIR,.x)) %>% 
+      add_tags(c(TAGS$two_compartment)))
+```
