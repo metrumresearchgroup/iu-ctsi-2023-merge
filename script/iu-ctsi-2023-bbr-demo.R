@@ -3,6 +3,7 @@ library(bbr)
 library(here)
 library(pmtables)
 library(pmplots)
+library(dplyr)
 
 MODEL_DIR <- here("model/pk")
 
@@ -20,8 +21,10 @@ model_summary(mod106)
 mod107 <- copy_model_from(mod106, "107") %>%
   update_model_id()
 
+mod107 %>% get_model_path() %>% file.edit()
+
 # see difference in control streams
-model_diff(mod107)
+model_diff(mod107, .viewer = TRUE)
 
 # submit the new model
 submit_model(mod107, .mode = "local", .wait = FALSE)
@@ -45,7 +48,7 @@ param107 <- param_estimates(sum107)
 View(param107)
 
 # join input data to output tables
-df107 <- nm_join(mod107)
+df107 <- nm_join(mod107) %>% filter(EVID == 0)
 View(df107)
 
 # make some simple diagnostic plots with MetrumRG's pmplots package
